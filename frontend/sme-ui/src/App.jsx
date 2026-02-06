@@ -3,74 +3,104 @@ import axios from "axios";
 
 const API_BASE = "https://sme-financial-platform-1.onrender.com";
 
-/* ---------- Reusable Components ---------- */
+/* ---------- Helpers ---------- */
+const money = (v) =>
+  v == null ? "—" : `₹${Number(v).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+
+const percent = (v) =>
+  v == null ? "—" : `${Number(v).toFixed(2)}%`;
+
+/* ---------- Layout ---------- */
 
 const Page = ({ children }) => (
-  <div style={{
-    background: "#f4f6fb",
-    minHeight: "100vh",
-    padding: "32px 40px",
-    fontFamily: "Inter, system-ui, -apple-system"
-  }}>
-    {children}
-  </div>
-);
-
-const Section = ({ title, subtitle, children }) => (
-  <div style={{ marginBottom: 36 }}>
-    <h2 style={{ marginBottom: 4 }}>{title}</h2>
-    {subtitle && <p style={{ color: "#666", marginBottom: 16 }}>{subtitle}</p>}
-    <div style={{
-      background: "#fff",
-      borderRadius: 14,
-      padding: 24,
-      boxShadow: "0 6px 20px rgba(0,0,0,0.06)"
-    }}>
+  <div
+    style={{
+      minHeight: "100vh",
+      width: "100vw",
+      background: "#f4f6fb",
+      display: "flex",
+      justifyContent: "center",
+      overflowX: "hidden"
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: 1280,
+        padding: "32px 20px",
+        boxSizing: "border-box",
+        fontFamily: "Inter, system-ui, -apple-system"
+      }}
+    >
       {children}
     </div>
   </div>
 );
 
+/* ---------- Components ---------- */
+
+const Section = ({ title, subtitle, children }) => (
+  <section style={{ marginBottom: 48 }}>
+    <h2 style={{ fontSize: 22, marginBottom: 6 }}>{title}</h2>
+    {subtitle && <p style={{ color: "#6b7280", marginBottom: 18 }}>{subtitle}</p>}
+    <div
+      style={{
+        background: "rgba(255,255,255,0.9)",
+        backdropFilter: "blur(8px)",
+        borderRadius: 20,
+        padding: 28,
+        boxShadow: "0 12px 32px rgba(0,0,0,0.08)"
+      }}
+    >
+      {children}
+    </div>
+  </section>
+);
+
 const KPI = ({ label, value }) => (
-  <div style={{
-    background: "#f9fafc",
-    borderRadius: 12,
-    padding: 18,
-    boxShadow: "inset 0 0 0 1px #e6e9f0"
-  }}>
-    <div style={{ fontSize: 13, color: "#666" }}>{label}</div>
-    <div style={{ fontSize: 20, fontWeight: 600 }}>{value}</div>
+  <div
+    style={{
+      background: "linear-gradient(180deg, #ffffff, #f8fafc)",
+      borderRadius: 16,
+      padding: 22,
+      boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
+      minWidth: 0
+    }}
+  >
+    <div style={{ fontSize: 13, color: "#6b7280", marginBottom: 6 }}>{label}</div>
+    <div style={{ fontSize: 22, fontWeight: 700 }}>{value}</div>
   </div>
 );
 
 const Badge = ({ text, type }) => {
-  const colors = {
+  const map = {
     good: "#16a34a",
     warn: "#d97706",
     bad: "#dc2626"
   };
   return (
-    <span style={{
-      padding: "6px 12px",
-      borderRadius: 999,
-      background: colors[type] + "20",
-      color: colors[type],
-      fontSize: 13,
-      fontWeight: 500
-    }}>
+    <span
+      style={{
+        padding: "8px 16px",
+        borderRadius: 999,
+        background: map[type] + "22",
+        color: map[type],
+        fontWeight: 600,
+        fontSize: 14
+      }}
+    >
       {text}
     </span>
   );
 };
 
-/* ---------- Main App ---------- */
+/* ---------- App ---------- */
 
 function App() {
   const [data, setData] = useState(null);
   const [credit, setCredit] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [gst, setGst] = useState(null);
-  const [benchmark, setBenchmark] = useState(null);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -78,7 +108,6 @@ function App() {
     axios.get(`${API_BASE}/analysis/creditworthiness`).then(r => setCredit(r.data));
     axios.get(`${API_BASE}/analysis/cashflow-forecast?months=6`).then(r => setForecast(r.data));
     axios.get(`${API_BASE}/analysis/gst-compliance`).then(r => setGst(r.data));
-    axios.get(`${API_BASE}/analysis/industry-benchmark?industry=Retail`).then(r => setBenchmark(r.data));
     axios.get(`${API_BASE}/analysis/financial-products`)
       .then(r => setProducts(r.data?.recommended_products || []));
   }, []);
@@ -86,8 +115,8 @@ function App() {
   if (!data) {
     return (
       <Page>
-        <h2>Analyzing your business finances…</h2>
-        <p>Please wait while AI evaluates your financial data.</p>
+        <h2>Analyzing your finances…</h2>
+        <p>AI is evaluating your business health.</p>
       </Page>
     );
   }
@@ -95,36 +124,49 @@ function App() {
   return (
     <Page>
 
-      {/* ---------- Header ---------- */}
-      <div style={{
-        background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-        padding: "28px 32px",
-        borderRadius: 18,
-        color: "#fff",
-        marginBottom: 40
-      }}>
-        <h1 style={{ marginBottom: 6 }}>SME Financial Health Dashboard</h1>
-        <p style={{ opacity: 0.9 }}>
+      {/* ---------- HERO ---------- */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+          borderRadius: 28,
+          padding: "48px 40px",
+          color: "#fff",
+          marginBottom: 56
+        }}
+      >
+        <h1 style={{ fontSize: 40, fontWeight: 800 }}>
+          SME Financial Health Dashboard
+        </h1>
+        <p style={{ opacity: 0.9, fontSize: 16, marginTop: 10 }}>
           AI-powered clarity for cash flow, compliance & credit readiness
         </p>
       </div>
 
-      {/* ---------- Financial Overview ---------- */}
+      {/* ---------- KPIs ---------- */}
       <Section
         title="📊 Financial Health Snapshot"
-        subtitle="High-level view of business performance"
+        subtitle="Instant view of business performance"
       >
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: 16,
-          marginBottom: 20
-        }}>
-          <KPI label="Revenue" value={`₹${data.metrics?.revenue}`} />
-          <KPI label="Expenses" value={`₹${data.metrics?.expenses}`} />
-          <KPI label="Profit Margin" value={`${data.metrics?.profit_margin}%`} />
-          <KPI label="Cash Balance" value={`₹${data.metrics?.cash_balance}`} />
-          <KPI label="Runway" value={`${data.metrics?.runway_months} months`} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 20,
+            marginBottom: 28
+          }}
+        >
+          <KPI label="Revenue" value={money(data.metrics?.revenue)} />
+          <KPI label="Expenses" value={money(data.metrics?.expenses)} />
+          <KPI label="Profit Margin" value={percent(data.metrics?.profit_margin)} />
+          <KPI label="Cash Balance" value={money(data.metrics?.cash_balance)} />
+          <KPI
+            label="Runway"
+            value={
+              data.metrics?.runway_months == null
+                ? "—"
+                : `${data.metrics.runway_months} months`
+            }
+          />
         </div>
 
         <Badge
@@ -133,60 +175,42 @@ function App() {
         />
       </Section>
 
-      {/* ---------- AI Insights ---------- */}
+      {/* ---------- AI INSIGHTS ---------- */}
       <Section
         title="🤖 AI Executive Summary"
-        subtitle="What the numbers actually mean"
+        subtitle="Actionable insights derived from your data"
       >
-        <p style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>
+        <p style={{ whiteSpace: "pre-line", lineHeight: 1.8 }}>
           {data.insights}
         </p>
       </Section>
 
-      {/* ---------- Credit ---------- */}
+      {/* ---------- CREDIT ---------- */}
       {credit && (
         <Section
           title="🏦 Credit Readiness"
-          subtitle="Loan & funding eligibility assessment"
+          subtitle="Funding & loan eligibility analysis"
         >
-          <div style={{ display: "grid", gap: 10 }}>
+          <div style={{ display: "grid", gap: 12 }}>
             <div>DSCR: <strong>{credit.dscr}</strong></div>
-            <div>Avg Monthly Cash Flow: ₹{credit.average_monthly_cashflow}</div>
-            <div>Total EMI: ₹{credit.total_monthly_emi}</div>
+            <div>Avg Monthly Cash Flow: {money(credit.average_monthly_cashflow)}</div>
+            <div>Total EMI: {money(credit.total_monthly_emi)}</div>
             <div>Status: <strong>{credit.lending_readiness}</strong></div>
-            {credit.blockers?.length > 0 && (
-              <div style={{ color: "#dc2626" }}>
-                Blockers: {credit.blockers.join(", ")}
-              </div>
-            )}
           </div>
         </Section>
       )}
 
-      {/* ---------- Forecast ---------- */}
+      {/* ---------- FORECAST ---------- */}
       {forecast && (
         <Section
           title="📈 Cash Flow Forecast"
-          subtitle="Projected balances over next 6 months"
+          subtitle="Next 6 months projection"
         >
-          <div style={{ marginBottom: 10 }}>
-            Current Cash: ₹{forecast.current_cash_balance}
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            Avg Monthly Cash Flow: ₹{forecast.average_monthly_cashflow}
-          </div>
-
           <ul>
             {Object.entries(forecast.forecast || {}).map(([m, f]) => (
-              <li key={m}>{m}: ₹{f.expected_balance}</li>
+              <li key={m}>{m}: {money(f.expected_balance)}</li>
             ))}
           </ul>
-
-          {forecast.warnings?.length > 0 && (
-            <p style={{ color: "#dc2626" }}>
-              ⚠ {forecast.warnings.join(", ")}
-            </p>
-          )}
         </Section>
       )}
 
@@ -194,21 +218,21 @@ function App() {
       {gst && (
         <Section
           title="🧾 GST Compliance"
-          subtitle="Tax exposure & filing risks"
+          subtitle="Tax exposure & compliance health"
         >
           <ul>
-            <li>Total Output GST: ₹{gst.total_output_gst}</li>
-            <li>Total Input GST: ₹{gst.total_input_gst}</li>
-            <li>Net GST Payable: ₹{gst.net_gst_payable}</li>
+            <li>Total Output GST: {money(gst.total_output_gst)}</li>
+            <li>Total Input GST: {money(gst.total_input_gst)}</li>
+            <li>Net GST Payable: {money(gst.net_gst_payable)}</li>
             <li>Compliance Score: {gst.compliance_score}</li>
           </ul>
         </Section>
       )}
 
-      {/* ---------- Products ---------- */}
+      {/* ---------- PRODUCTS ---------- */}
       <Section
         title="💼 Recommended Financial Products"
-        subtitle="AI-suggested funding & optimization options"
+        subtitle="AI-suggested growth & funding options"
       >
         <ul>
           {products.map((p, i) => (
@@ -219,19 +243,19 @@ function App() {
         </ul>
       </Section>
 
-      {/* ---------- Report ---------- */}
+      {/* ---------- REPORT ---------- */}
       <Section title="📄 Download Report">
         <a
           href={`${API_BASE}/reports/download`}
           target="_blank"
           rel="noreferrer"
           style={{
-            padding: "12px 18px",
+            padding: "14px 22px",
             background: "#4f46e5",
             color: "#fff",
-            borderRadius: 10,
+            borderRadius: 14,
             textDecoration: "none",
-            fontWeight: 500
+            fontWeight: 600
           }}
         >
           Download Investor-Ready PDF
