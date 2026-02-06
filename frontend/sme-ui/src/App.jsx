@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+/**
+ * API base URL logic:
+ * - Local run → http://127.0.0.1:8000
+ * - Deployed (Vercel) → VITE_API_BASE_URL
+ */
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
 function App() {
   const [data, setData] = useState(null);
   const [credit, setCredit] = useState(null);
@@ -10,32 +18,32 @@ function App() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/financial-insights")
+    axios.get(`${API_BASE_URL}/analysis/financial-insights`)
       .then(res => setData(res.data));
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/creditworthiness")
+    axios.get(`${API_BASE_URL}/analysis/creditworthiness`)
       .then(res => setCredit(res.data));
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/cashflow-forecast?months=6")
+    axios.get(`${API_BASE_URL}/analysis/cashflow-forecast?months=6`)
       .then(res => setForecast(res.data));
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/gst-compliance")
+    axios.get(`${API_BASE_URL}/analysis/gst-compliance`)
       .then(res => setGst(res.data));
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/industry-benchmark?industry=Retail")
+    axios.get(`${API_BASE_URL}/analysis/industry-benchmark?industry=Retail`)
       .then(res => setBenchmark(res.data));
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/analysis/financial-products")
+    axios.get(`${API_BASE_URL}/analysis/financial-products`)
       .then(res => setProducts(res.data.recommended_products));
   }, []);
 
@@ -72,7 +80,6 @@ function App() {
       )}
 
       <h3>Cash Flow Forecast</h3>
-
       {forecast && (
         <>
           <p>Current Cash Balance: ₹{forecast.current_cash_balance}</p>
@@ -99,7 +106,6 @@ function App() {
       )}
 
       <h3>GST Compliance</h3>
-
       {gst && (
         <ul>
           <li>Total Output GST: ₹{gst.total_output_gst}</li>
@@ -120,7 +126,6 @@ function App() {
       )}
 
       <h3>Industry Benchmark Comparison</h3>
-
       {benchmark && (
         <>
           <p><strong>Industry:</strong> {benchmark.industry}</p>
@@ -161,7 +166,6 @@ function App() {
       )}
 
       <h3>Recommended Financial Products</h3>
-
       <ul>
         {products.map((p, idx) => (
           <li key={idx}>
@@ -169,7 +173,12 @@ function App() {
           </li>
         ))}
       </ul>
-      <a href="http://127.0.0.1:8000/reports/download" target="_blank">
+
+      <a
+        href={`${API_BASE_URL}/reports/download`}
+        target="_blank"
+        rel="noreferrer"
+      >
         Download Financial Report (PDF)
       </a>
     </div>
