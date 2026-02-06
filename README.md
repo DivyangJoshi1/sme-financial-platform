@@ -5,7 +5,7 @@ The system analyzes financial data, evaluates creditworthiness, checks GST compl
 
 ---
 
-##  Features
+## 🚀 Features
 
 ### Core Financial Analysis
 - Financial health score (0–100)
@@ -58,7 +58,7 @@ The system analyzes financial data, evaluates creditworthiness, checks GST compl
 
 ---
 
-##  Tech Stack
+## 🏗️ Tech Stack
 
 ### Backend
 - **FastAPI**
@@ -82,7 +82,7 @@ The system analyzes financial data, evaluates creditworthiness, checks GST compl
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 sme-financial-platform/
 │
@@ -111,7 +111,7 @@ sme-financial-platform/
 
 ---
 
-##  Environment Variables
+## ⚙️ Environment Variables
 
 Create a `.env` file in the project root.
 
@@ -120,7 +120,7 @@ Create a `.env` file in the project root.
 DATABASE_URL=postgresql://postgres:postgres@db:5432/sme_finance
 OPENAI_API_KEY=your_openai_key_here
 SECRET_KEY=change_this_secret
- Local Development (Without Docker)
+🧪 Local Development (Without Docker)
 1️⃣ Backend Setup
 cd backend
 python -m venv .venv
@@ -138,7 +138,7 @@ npm run dev
 Frontend runs at:
 
 http://localhost:5173
- Run with Docker (Recommended)
+🐳 Run with Docker (Recommended)
 docker-compose up --build
 Services:
 
@@ -148,7 +148,7 @@ Frontend → http://localhost:5173
 
 PostgreSQL → internal container
 
- Authentication & Roles
+🔐 Authentication & Roles
 Supported Roles
 Role	Permissions
 SME_OWNER	Full access to own data
@@ -156,14 +156,14 @@ BANK_USER	Read-only reports
 ADMIN	Full system access
 JWT is required for protected endpoints.
 
- API Endpoints (Sample)
+📊 API Endpoints (Sample)
 Endpoint	Description
 /analysis/financial-insights	Financial health metrics
 /analysis/gst-compliance	GST risk & compliance
 /analysis/industry-benchmark	Industry comparison
 /analysis/financial-products	Credit recommendations
 /reports/download	PDF financial report
- PDF Reports
+📄 PDF Reports
 Generated on-demand
 
 Bank & investor friendly
@@ -172,14 +172,14 @@ Secure role-based access
 
 Downloadable via API
 
- AI Usage Notes
+🧠 AI Usage Notes
 AI is used only for narrative insights & translation
 
 Core financial logic is deterministic
 
 System works even if AI quota is exceeded
 
-Roadmap
+📌 Roadmap
 Bank API integrations (Account Aggregator)
 
 GSTN API integration
@@ -194,9 +194,9 @@ Multi-tenant SaaS support
 This platform provides financial insights and recommendations only.
 It does not constitute legal, tax, or financial advice.
 
-Contributing
+🤝 Contributing
 Pull requests are welcome.
 For major changes, please open an issue first.
 
- License
+📜 License
 MIT License
