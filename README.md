@@ -138,7 +138,7 @@ npm run dev
 Frontend runs at:
 
 http://localhost:5173
-🐳 Run with Docker (Recommended)
+Run with Docker (Recommended)
 docker-compose up --build
 Services:
 
@@ -148,7 +148,7 @@ Frontend → http://localhost:5173
 
 PostgreSQL → internal container
 
-🔐 Authentication & Roles
+Authentication & Roles
 Supported Roles
 Role	Permissions
 SME_OWNER	Full access to own data
@@ -163,7 +163,7 @@ Endpoint	Description
 /analysis/industry-benchmark	Industry comparison
 /analysis/financial-products	Credit recommendations
 /reports/download	PDF financial report
-📄 PDF Reports
+PDF Reports
 Generated on-demand
 
 Bank & investor friendly
@@ -172,14 +172,14 @@ Secure role-based access
 
 Downloadable via API
 
-🧠 AI Usage Notes
+AI Usage Notes
 AI is used only for narrative insights & translation
 
 Core financial logic is deterministic
 
 System works even if AI quota is exceeded
 
-📌 Roadmap
+Roadmap
 Bank API integrations (Account Aggregator)
 
 GSTN API integration
@@ -194,9 +194,6 @@ Multi-tenant SaaS support
 This platform provides financial insights and recommendations only.
 It does not constitute legal, tax, or financial advice.
 
-🤝 Contributing
+Contributing
 Pull requests are welcome.
 For major changes, please open an issue first.
-
-📜 License
-MIT License
