@@ -3,16 +3,37 @@ import axios from "axios";
 
 const API_BASE = "https://sme-financial-platform-1.onrender.com";
 
+/* ---------- Helpers ---------- */
+const formatCurrency = (v) =>
+  v == null ? "—" : `₹${Number(v).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+
+const formatPercent = (v) =>
+  v == null ? "—" : `${Number(v).toFixed(2)}%`;
+
 /* ---------- Reusable Components ---------- */
 
 const Page = ({ children }) => (
-  <div style={{
-    background: "#f4f6fb",
-    minHeight: "100vh",
-    padding: "32px 40px",
-    fontFamily: "Inter, system-ui, -apple-system"
-  }}>
-    {children}
+  <div
+    style={{
+      background: "#f4f6fb",
+      minHeight: "100vh",
+      width: "100%",
+      overflowX: "hidden",              // ✅ no horizontal scroll
+      display: "flex",
+      justifyContent: "center",
+      padding: "24px 16px",
+      boxSizing: "border-box",
+      fontFamily: "Inter, system-ui, -apple-system"
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: 1200                   // ✅ SaaS-style fixed width
+      }}
+    >
+      {children}
+    </div>
   </div>
 );
 
@@ -20,26 +41,33 @@ const Section = ({ title, subtitle, children }) => (
   <div style={{ marginBottom: 36 }}>
     <h2 style={{ marginBottom: 4 }}>{title}</h2>
     {subtitle && <p style={{ color: "#666", marginBottom: 16 }}>{subtitle}</p>}
-    <div style={{
-      background: "#fff",
-      borderRadius: 14,
-      padding: 24,
-      boxShadow: "0 6px 20px rgba(0,0,0,0.06)"
-    }}>
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: 14,
+        padding: 24,
+        boxShadow: "0 6px 20px rgba(0,0,0,0.06)"
+      }}
+    >
       {children}
     </div>
   </div>
 );
 
 const KPI = ({ label, value }) => (
-  <div style={{
-    background: "#f9fafc",
-    borderRadius: 12,
-    padding: 18,
-    boxShadow: "inset 0 0 0 1px #e6e9f0"
-  }}>
+  <div
+    style={{
+      background: "#f9fafc",
+      borderRadius: 12,
+      padding: 18,
+      boxShadow: "inset 0 0 0 1px #e6e9f0",
+      minWidth: 0                       // ✅ prevents overflow
+    }}
+  >
     <div style={{ fontSize: 13, color: "#666" }}>{label}</div>
-    <div style={{ fontSize: 20, fontWeight: 600 }}>{value}</div>
+    <div style={{ fontSize: 20, fontWeight: 600, wordBreak: "break-word" }}>
+      {value}
+    </div>
   </div>
 );
 
@@ -50,14 +78,16 @@ const Badge = ({ text, type }) => {
     bad: "#dc2626"
   };
   return (
-    <span style={{
-      padding: "6px 12px",
-      borderRadius: 999,
-      background: colors[type] + "20",
-      color: colors[type],
-      fontSize: 13,
-      fontWeight: 500
-    }}>
+    <span
+      style={{
+        padding: "6px 12px",
+        borderRadius: 999,
+        background: colors[type] + "20",
+        color: colors[type],
+        fontSize: 13,
+        fontWeight: 500
+      }}
+    >
       {text}
     </span>
   );
@@ -96,13 +126,15 @@ function App() {
     <Page>
 
       {/* ---------- Header ---------- */}
-      <div style={{
-        background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-        padding: "28px 32px",
-        borderRadius: 18,
-        color: "#fff",
-        marginBottom: 40
-      }}>
+      <div
+        style={{
+          background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+          padding: "28px 32px",
+          borderRadius: 18,
+          color: "#fff",
+          marginBottom: 40
+        }}
+      >
         <h1 style={{ marginBottom: 6 }}>SME Financial Health Dashboard</h1>
         <p style={{ opacity: 0.9 }}>
           AI-powered clarity for cash flow, compliance & credit readiness
@@ -114,17 +146,26 @@ function App() {
         title="📊 Financial Health Snapshot"
         subtitle="High-level view of business performance"
       >
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: 16,
-          marginBottom: 20
-        }}>
-          <KPI label="Revenue" value={`₹${data.metrics?.revenue}`} />
-          <KPI label="Expenses" value={`₹${data.metrics?.expenses}`} />
-          <KPI label="Profit Margin" value={`${data.metrics?.profit_margin}%`} />
-          <KPI label="Cash Balance" value={`₹${data.metrics?.cash_balance}`} />
-          <KPI label="Runway" value={`${data.metrics?.runway_months} months`} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 16,
+            marginBottom: 20
+          }}
+        >
+          <KPI label="Revenue" value={formatCurrency(data.metrics?.revenue)} />
+          <KPI label="Expenses" value={formatCurrency(data.metrics?.expenses)} />
+          <KPI label="Profit Margin" value={formatPercent(data.metrics?.profit_margin)} />
+          <KPI label="Cash Balance" value={formatCurrency(data.metrics?.cash_balance)} />
+          <KPI
+            label="Runway"
+            value={
+              data.metrics?.runway_months == null
+                ? "—"
+                : `${data.metrics.runway_months} months`
+            }
+          />
         </div>
 
         <Badge
@@ -151,8 +192,8 @@ function App() {
         >
           <div style={{ display: "grid", gap: 10 }}>
             <div>DSCR: <strong>{credit.dscr}</strong></div>
-            <div>Avg Monthly Cash Flow: ₹{credit.average_monthly_cashflow}</div>
-            <div>Total EMI: ₹{credit.total_monthly_emi}</div>
+            <div>Avg Monthly Cash Flow: {formatCurrency(credit.average_monthly_cashflow)}</div>
+            <div>Total EMI: {formatCurrency(credit.total_monthly_emi)}</div>
             <div>Status: <strong>{credit.lending_readiness}</strong></div>
             {credit.blockers?.length > 0 && (
               <div style={{ color: "#dc2626" }}>
@@ -169,16 +210,12 @@ function App() {
           title="📈 Cash Flow Forecast"
           subtitle="Projected balances over next 6 months"
         >
-          <div style={{ marginBottom: 10 }}>
-            Current Cash: ₹{forecast.current_cash_balance}
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            Avg Monthly Cash Flow: ₹{forecast.average_monthly_cashflow}
-          </div>
+          <div>Current Cash: {formatCurrency(forecast.current_cash_balance)}</div>
+          <div>Avg Monthly Cash Flow: {formatCurrency(forecast.average_monthly_cashflow)}</div>
 
           <ul>
             {Object.entries(forecast.forecast || {}).map(([m, f]) => (
-              <li key={m}>{m}: ₹{f.expected_balance}</li>
+              <li key={m}>{m}: {formatCurrency(f.expected_balance)}</li>
             ))}
           </ul>
 
@@ -197,9 +234,9 @@ function App() {
           subtitle="Tax exposure & filing risks"
         >
           <ul>
-            <li>Total Output GST: ₹{gst.total_output_gst}</li>
-            <li>Total Input GST: ₹{gst.total_input_gst}</li>
-            <li>Net GST Payable: ₹{gst.net_gst_payable}</li>
+            <li>Total Output GST: {formatCurrency(gst.total_output_gst)}</li>
+            <li>Total Input GST: {formatCurrency(gst.total_input_gst)}</li>
+            <li>Net GST Payable: {formatCurrency(gst.net_gst_payable)}</li>
             <li>Compliance Score: {gst.compliance_score}</li>
           </ul>
         </Section>
