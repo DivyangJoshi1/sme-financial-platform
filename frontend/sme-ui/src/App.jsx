@@ -3,6 +3,19 @@ import axios from "axios";
 
 const API_BASE = "https://sme-financial-platform-1.onrender.com";
 
+const Card = ({ title, children }) => (
+  <div style={{
+    background: "#ffffff",
+    padding: 20,
+    marginBottom: 24,
+    borderRadius: 12,
+    boxShadow: "0 4px 14px rgba(0,0,0,0.08)"
+  }}>
+    <h2 style={{ marginBottom: 12 }}>{title}</h2>
+    {children}
+  </div>
+);
+
 function App() {
   const [data, setData] = useState(null);
   const [credit, setCredit] = useState(null);
@@ -13,83 +26,75 @@ function App() {
 
   useEffect(() => {
     axios.get(`${API_BASE}/analysis/financial-insights`)
-      .then(res => setData(res.data))
-      .catch(() => setData(null));
-  }, []);
-
-  useEffect(() => {
+      .then(res => setData(res.data));
     axios.get(`${API_BASE}/analysis/creditworthiness`)
-      .then(res => setCredit(res.data))
-      .catch(() => setCredit(null));
-  }, []);
-
-  useEffect(() => {
+      .then(res => setCredit(res.data));
     axios.get(`${API_BASE}/analysis/cashflow-forecast?months=6`)
-      .then(res => setForecast(res.data))
-      .catch(() => setForecast(null));
-  }, []);
-
-  useEffect(() => {
+      .then(res => setForecast(res.data));
     axios.get(`${API_BASE}/analysis/gst-compliance`)
-      .then(res => setGst(res.data))
-      .catch(() => setGst(null));
-  }, []);
-
-  useEffect(() => {
+      .then(res => setGst(res.data));
     axios.get(`${API_BASE}/analysis/industry-benchmark?industry=Retail`)
-      .then(res => setBenchmark(res.data))
-      .catch(() => setBenchmark(null));
-  }, []);
-
-  useEffect(() => {
+      .then(res => setBenchmark(res.data));
     axios.get(`${API_BASE}/analysis/financial-products`)
-      .then(res => setProducts(res.data?.recommended_products || []))
-      .catch(() => setProducts([]));
+      .then(res => setProducts(res.data?.recommended_products || []));
   }, []);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) {
+    return (
+      <div style={{ padding: 60, textAlign: "center" }}>
+        <h2>Loading Financial Dashboard…</h2>
+        <p>Please wait while we analyze your business data.</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>SME Financial Health</h1>
-      <h2>Score: {data.score}</h2>
+    <div style={{
+      background: "#f5f7fb",
+      minHeight: "100vh",
+      padding: 40,
+      fontFamily: "Inter, system-ui, sans-serif"
+    }}>
+      <h1 style={{ marginBottom: 8 }}>SME Financial Health Dashboard</h1>
+      <p style={{ color: "#555", marginBottom: 30 }}>
+        AI-powered insights to understand your business finances clearly.
+      </p>
 
-      <h3>Key Metrics</h3>
-      <ul>
-        <li>Revenue: ₹{data.metrics?.revenue}</li>
-        <li>Expenses: ₹{data.metrics?.expenses}</li>
-        <li>Profit Margin: {data.metrics?.profit_margin}%</li>
-        <li>Cash Balance: ₹{data.metrics?.cash_balance}</li>
-        <li>Runway: {data.metrics?.runway_months} months</li>
-      </ul>
+      <Card title="📊 Financial Health Overview">
+        <h3>Overall Score: {data.score}</h3>
+        <ul>
+          <li>Revenue: ₹{data.metrics?.revenue}</li>
+          <li>Expenses: ₹{data.metrics?.expenses}</li>
+          <li>Profit Margin: {data.metrics?.profit_margin}%</li>
+          <li>Cash Balance: ₹{data.metrics?.cash_balance}</li>
+          <li>Runway: {data.metrics?.runway_months} months</li>
+        </ul>
+      </Card>
 
-      <h3>AI Insights</h3>
-      <p style={{ whiteSpace: "pre-line" }}>{data.insights}</p>
+      <Card title="🤖 AI Financial Insights">
+        <p style={{ whiteSpace: "pre-line" }}>{data.insights}</p>
+      </Card>
 
       {credit && (
-        <>
-          <h3>Credit Readiness</h3>
+        <Card title="🏦 Credit Readiness">
           <ul>
             <li>DSCR: {credit.dscr}</li>
-            <li>Avg Monthly Cash Flow: ₹{credit.average_monthly_cashflow}</li>
-            <li>Monthly EMI: ₹{credit.total_monthly_emi}</li>
+            <li>Average Monthly Cash Flow: ₹{credit.average_monthly_cashflow}</li>
+            <li>Total Monthly EMI: ₹{credit.total_monthly_emi}</li>
             <li>Status: {credit.lending_readiness}</li>
             {credit.blockers?.length > 0 && (
-              <li>Blockers: {credit.blockers.join(", ")}</li>
+              <li style={{ color: "red" }}>
+                Blockers: {credit.blockers.join(", ")}
+              </li>
             )}
           </ul>
-        </>
+        </Card>
       )}
 
       {forecast && (
-        <>
-          <h3>Cash Flow Forecast</h3>
+        <Card title="📈 Cash Flow Forecast (6 Months)">
           <p>Current Cash Balance: ₹{forecast.current_cash_balance}</p>
           <p>Avg Monthly Cash Flow: ₹{forecast.average_monthly_cashflow}</p>
-
-          {forecast.runway_months && (
-            <p>Estimated Runway: {forecast.runway_months} months</p>
-          )}
 
           {forecast.warnings?.length > 0 && (
             <p style={{ color: "red" }}>
@@ -98,41 +103,33 @@ function App() {
           )}
 
           <ul>
-            {Object.entries(forecast.forecast || {}).map(([month, val]) => (
-              <li key={month}>{month}: ₹{val.expected_balance}</li>
+            {Object.entries(forecast.forecast || {}).map(([month, f]) => (
+              <li key={month}>{month}: ₹{f.expected_balance}</li>
             ))}
           </ul>
-        </>
+        </Card>
       )}
 
       {gst && (
-        <>
-          <h3>GST Compliance</h3>
+        <Card title="🧾 GST Compliance">
           <ul>
             <li>Total Output GST: ₹{gst.total_output_gst}</li>
             <li>Total Input GST: ₹{gst.total_input_gst}</li>
             <li>Net GST Payable: ₹{gst.net_gst_payable}</li>
             <li>Compliance Score: {gst.compliance_score}</li>
-
             {gst.unfiled_periods?.length > 0 && (
               <li style={{ color: "red" }}>
                 Unfiled Periods: {gst.unfiled_periods.join(", ")}
               </li>
             )}
-
-            {gst.warnings?.length > 0 && (
-              <li>Warnings: {gst.warnings.join("; ")}</li>
-            )}
           </ul>
-        </>
+        </Card>
       )}
 
       {benchmark && (
-        <>
-          <h3>Industry Benchmark Comparison</h3>
+        <Card title="🏭 Industry Benchmarking">
           <p><strong>Industry:</strong> {benchmark.industry}</p>
-
-          <table>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
                 <th>Metric</th>
@@ -142,12 +139,12 @@ function App() {
             </thead>
             <tbody>
               <tr>
-                <td>Gross Margin (%)</td>
+                <td>Gross Margin</td>
                 <td>{benchmark.your_kpis?.gross_margin}</td>
                 <td>{benchmark.industry_average?.gross_margin}</td>
               </tr>
               <tr>
-                <td>Net Margin (%)</td>
+                <td>Net Margin</td>
                 <td>{benchmark.your_kpis?.net_margin}</td>
                 <td>{benchmark.industry_average?.net_margin}</td>
               </tr>
@@ -164,21 +161,36 @@ function App() {
               <li key={idx}>{i}</li>
             ))}
           </ul>
-        </>
+        </Card>
       )}
 
-      <h3>Recommended Financial Products</h3>
-      <ul>
-        {products.map((p, idx) => (
-          <li key={idx}>
-            <strong>{p.product}</strong>: {p.reason}
-          </li>
-        ))}
-      </ul>
+      <Card title="💼 Recommended Financial Products">
+        <ul>
+          {products.map((p, idx) => (
+            <li key={idx}>
+              <strong>{p.product}</strong> — {p.reason}
+            </li>
+          ))}
+        </ul>
+      </Card>
 
-      <a href={`${API_BASE}/reports/download`} target="_blank" rel="noreferrer">
-        Download Financial Report (PDF)
-      </a>
+      <Card title="📄 Financial Report">
+        <a
+          href={`${API_BASE}/reports/download`}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-block",
+            padding: "10px 16px",
+            background: "#4f46e5",
+            color: "#fff",
+            borderRadius: 8,
+            textDecoration: "none"
+          }}
+        >
+          Download Investor-Ready PDF Report
+        </a>
+      </Card>
     </div>
   );
 }
